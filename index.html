@@ -578,6 +578,114 @@
     font-size: 12px; color: var(--text-muted); background: #f8fafc; padding: 8px 12px;
     border-radius: 6px; margin-top: 8px; line-height: 1.6;
   }
+
+  /* ===== 产品库 ===== */
+  .product-db-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); z-index: 500;
+    display: flex; align-items: flex-start; justify-content: flex-end;
+    padding: 70px 16px 16px;
+  }
+  .product-db-panel {
+    background: white; border-radius: 12px; width: 440px; max-width: 100%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15); display: flex; flex-direction: column;
+    max-height: calc(100vh - 90px); animation: slideInRight 0.25s ease;
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .product-db-header {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: #fafbfc; border-radius: 12px 12px 0 0; flex-shrink: 0;
+  }
+  .product-db-header h3 { font-size: 15px; font-weight: 600; }
+  .product-db-close {
+    background: none; border: none; font-size: 20px; cursor: pointer;
+    color: var(--text-muted); padding: 2px 6px; border-radius: 4px;
+  }
+  .product-db-close:hover { background: #f1f5f9; color: var(--text); }
+  .product-db-search { padding: 10px 16px; flex-shrink: 0; }
+  .product-db-search input {
+    width: 100%; padding: 9px 12px 9px 34px; border: 1px solid var(--border);
+    border-radius: 8px; font-size: 14px; outline: none; background: #f8fafc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242.156a5 5 0 1 1 0-10 5 5 0 0 1 0 10z'/%3E%3C/svg%3E") 12px center no-repeat;
+  }
+  .product-db-search input:focus { border-color: var(--primary); background-color: white; }
+  .product-db-body { overflow-y: auto; flex: 1; padding: 0 16px 16px; }
+  .product-db-actions {
+    padding: 10px 16px; border-top: 1px solid var(--border);
+    display: flex; gap: 8px; flex-shrink: 0;
+  }
+  .product-db-actions .btn { flex: 1; font-size: 12px; padding: 8px 10px; }
+
+  .product-db-item {
+    padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
+    margin-bottom: 8px; cursor: default; transition: all 0.15s;
+  }
+  .product-db-item .item-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .product-db-item .item-model { font-size: 13px; font-weight: 600; color: var(--primary); }
+  .product-db-item .item-name { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .product-db-item .item-details { display: flex; gap: 10px; font-size: 11px; color: var(--text-muted); flex-wrap: wrap; }
+  .product-db-item .item-details span { white-space: nowrap; }
+  .product-db-item .item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .product-db-item .item-actions button {
+    background: none; border: 1px solid var(--border); border-radius: 4px;
+    padding: 3px 10px; font-size: 11px; cursor: pointer; color: var(--text-secondary);
+    transition: all 0.15s;
+  }
+  .product-db-item .item-actions button:hover { border-color: var(--primary); color: var(--primary); }
+  .product-db-item .item-actions .btn-del:hover { border-color: var(--danger); color: var(--danger); }
+  .product-db-item .item-actions .btn-fill {
+    background: var(--primary) !important; color: white !important; border-color: var(--primary) !important;
+  }
+  .product-db-item .item-actions .btn-fill:hover { background: var(--primary-hover) !important; }
+
+  /* 产品库编辑弹窗 */
+  .pdb-edit-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); z-index: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pdb-edit-modal {
+    background: white; border-radius: 12px; width: 400px; max-width: 90%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2); animation: fadeIn 0.2s ease;
+  }
+  .pdb-edit-header {
+    padding: 14px 16px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; background: #fafbfc;
+    border-radius: 12px 12px 0 0;
+  }
+  .pdb-edit-header h3 { font-size: 15px; font-weight: 600; }
+  .pdb-edit-body { padding: 16px; max-height: 60vh; overflow-y: auto; }
+  .pdb-edit-footer { padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+
+  /* 保存到产品库按钮 */
+  .save-to-db-btn {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: white; border: none; border-radius: 6px;
+    padding: 6px 12px; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .save-to-db-btn:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(124,58,237,0.3); }
+
+  /* 产品库匹配下拉 */
+  .pdb-match-dropdown {
+    position: absolute; z-index: 200; background: white;
+    border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12); max-height: 280px;
+    overflow-y: auto; min-width: 320px; display: none;
+  }
+  .pdb-match-dropdown.show { display: block; }
+  .pdb-match-item {
+    padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f1f5f9;
+    transition: background 0.1s;
+  }
+  .pdb-match-item:last-child { border-bottom: none; }
+  .pdb-match-item:hover { background: #f0f9ff; }
+  .pdb-match-item .mi-model { font-size: 13px; font-weight: 600; color: var(--primary); }
+  .pdb-match-item .mi-name { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+  .pdb-match-item .mi-detail { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -588,6 +696,7 @@
     <div class="sub">输入成本 → 自动计算 EXW / FOB / CIF / DAP / DDP 阶梯报价 → 一键复制</div>
   </div>
   <div style="display:flex;gap:8px;flex-shrink:0;">
+    <button class="header-action-btn" onclick="openProductDB()" title="产品库">📦 产品库 <span id="productDBCount" style="font-size:11px;opacity:0.8;"></span></button>
     <button class="header-action-btn" onclick="clearForm()" title="清空当前表单">🗑️ 清空表单</button>
     <span id="autoSaveIndicator" style="font-size:11px;color:rgba(255,255,255,0.6);align-self:center;white-space:nowrap;"></span>
   </div>
@@ -641,6 +750,7 @@
       <div class="card">
         <div class="card-header">
           <h2>📦 产品信息</h2>
+          <button class="save-to-db-btn" onclick="saveToProductDB('single')">💾 存入产品库</button>
         </div>
         <div class="card-body">
           <div class="form-row">
@@ -1083,6 +1193,40 @@
 
 <div class="toast" id="toast">已复制到剪贴板 ✓</div>
 
+<!-- 产品库面板 -->
+<div id="productDBOverlay" class="product-db-overlay" style="display:none;" onclick="if(event.target===this)closeProductDB()">
+  <div class="product-db-panel">
+    <div class="product-db-header">
+      <h3>📦 产品库</h3>
+      <button class="product-db-close" onclick="closeProductDB()">✕</button>
+    </div>
+    <div class="product-db-search">
+      <input type="text" id="pdbSearch" placeholder="搜索型号或产品名…" oninput="renderProductDB()">
+    </div>
+    <div class="product-db-body" id="pdbBody"></div>
+    <div class="product-db-actions">
+      <button class="btn btn-sm btn-outline" onclick="exportProductDB()">📤 导出CSV</button>
+      <button class="btn btn-sm btn-outline" onclick="importProductDB()">📥 导入CSV</button>
+      <input type="file" id="pdbImportFile" accept=".csv" style="display:none;" onchange="handleImportCSV(event)">
+    </div>
+  </div>
+</div>
+
+<!-- 产品库编辑弹窗（动态填充） -->
+<div id="pdbEditOverlay" class="pdb-edit-overlay" style="display:none;" onclick="if(event.target===this)closePdbEdit()">
+  <div class="pdb-edit-modal">
+    <div class="pdb-edit-header">
+      <h3 id="pdbEditTitle">新增产品</h3>
+      <button class="product-db-close" onclick="closePdbEdit()">✕</button>
+    </div>
+    <div class="pdb-edit-body" id="pdbEditBody"></div>
+    <div class="pdb-edit-footer">
+      <button class="btn btn-sm btn-outline" onclick="closePdbEdit()">取消</button>
+      <button class="btn btn-sm btn-primary" style="width:auto;padding:8px 20px;" onclick="savePdbEdit()">💾 保存</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ========== 全局状态 ==========
 let currentRate = 6.8;
@@ -1326,6 +1470,10 @@ function restoreFormData() {
           <button class="remove-product-btn" onclick="removeProductItem(${idx})" title="删除">×</button>
           <div><span class="product-num">${idx}</span><span class="product-name-inline" id="pname-${idx}">产品 ${idx}</span></div>
           <div class="product-fields">
+            <div style="display:flex;gap:6px;margin-bottom:8px;">
+              <button onclick="fillFromPDBMulti(${idx})" style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:var(--primary);transition:all 0.15s;" title="从产品库填入">📦 从产品库填入</button>
+              <button onclick="saveMultiItemToPDB(${idx})" style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#7c3aed;transition:all 0.15s;" title="保存此产品到产品库">💾 存入产品库</button>
+            </div>
             <!-- 智能填充（多品） -->
             <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:8px 10px;margin-bottom:10px;">
               <div style="display:flex;gap:6px;align-items:center;">
@@ -1594,12 +1742,459 @@ function setVal(id, value, isSelect) {
   else el.value = value !== undefined && value !== null ? String(value) : '';
 }
 
+// ========== 产品库 ==========
+const PDB_KEY = 'quoteProductDB';
+let pdbEditIdx = -1; // -1 = 新增
+
+function getProductDB() {
+  try { return JSON.parse(localStorage.getItem(PDB_KEY) || '[]'); } catch(e) { return []; }
+}
+function saveProductDBData(data) {
+  localStorage.setItem(PDB_KEY, JSON.stringify(data));
+  updatePDBCount();
+}
+
+function updatePDBCount() {
+  const data = getProductDB();
+  const el = document.getElementById('productDBCount');
+  if (el) el.textContent = data.length > 0 ? `(${data.length})` : '';
+}
+
+function openProductDB() {
+  document.getElementById('productDBOverlay').style.display = 'flex';
+  document.getElementById('pdbSearch').value = '';
+  document.getElementById('pdbSearch').focus();
+  renderProductDB();
+}
+function closeProductDB() {
+  document.getElementById('productDBOverlay').style.display = 'none';
+}
+
+function renderProductDB() {
+  const data = getProductDB();
+  const keyword = (document.getElementById('pdbSearch')?.value || '').trim().toUpperCase();
+  const filtered = keyword
+    ? data.filter(p => (p.model || '').toUpperCase().includes(keyword) || (p.name || '').toUpperCase().includes(keyword))
+    : data;
+
+  const body = document.getElementById('pdbBody');
+  if (filtered.length === 0) {
+    body.innerHTML = `<div class="empty-state" style="padding:40px 20px;"><div class="icon">📭</div><div>${keyword ? '没有匹配的产品' : '产品库为空，报价时点「💾 存入产品库」保存'}</div></div>`;
+    return;
+  }
+
+  body.innerHTML = filtered.map((p, i) => {
+    const realIdx = data.indexOf(p);
+    const boxInfo = p.cL && p.cW && p.cH ? `${p.cL}×${p.cW}×${p.cH}cm` : '';
+    const pcsInfo = p.ppc && p.ppc > 1 ? `${p.ppc}pcs/箱` : '';
+    const gwInfo = p.cgw ? `${p.cgw}kg/箱` : '';
+    const detailParts = [boxInfo, pcsInfo, gwInfo].filter(Boolean);
+    return `<div class="product-db-item">
+      <div class="item-top">
+        <div><span class="item-model">${p.model || '-'}</span></div>
+        <div class="item-actions">
+          <button class="btn-fill" onclick="fillFromPDB(${realIdx})" title="填入报价表">📋 填入</button>
+          <button onclick="openPdbEdit(${realIdx})" title="编辑">✏️</button>
+          <button class="btn-del" onclick="deletePDBItem(${realIdx})" title="删除">🗑️</button>
+        </div>
+      </div>
+      <div class="item-name">${p.name || '-'}</div>
+      ${detailParts.length > 0 ? `<div class="item-details">${detailParts.map(d => `<span>${d}</span>`).join('')}</div>` : ''}
+      <div class="item-details" style="margin-top:3px;"><span>含税 ¥${p.incTax || 0}</span>${p.acc ? `<span>辅料 ¥${p.acc}</span>` : ''}</div>
+    </div>`;
+  }).join('');
+}
+
+function deletePDBItem(idx) {
+  const data = getProductDB();
+  const item = data[idx];
+  if (!item) return;
+  if (!confirm(`确定删除「${item.model || item.name || ''}」？`)) return;
+  data.splice(idx, 1);
+  saveProductDBData(data);
+  renderProductDB();
+  showToast('🗑️ 已删除');
+}
+
+// 从产品库填入表单
+function fillFromPDB(idx) {
+  const data = getProductDB();
+  const p = data[idx];
+  if (!p) return;
+
+  if (quoteMode === 'multi') {
+    // 多品模式：填入第一个产品卡片（或新增一个）
+    const firstItem = document.querySelector('#productList .product-item');
+    if (!firstItem) addProductItem();
+    const target = document.querySelector('#productList .product-item:last-child');
+    if (!target) return;
+    const i = target.id.replace('product-', '');
+    if (p.name) { setVal('mp-name-' + i, p.name); document.getElementById('pname-' + i).textContent = p.name; }
+    if (p.model) setVal('mp-model-' + i, p.model);
+    if (p.incTax) setVal('mp-price-' + i, p.incTax);
+    if (p.acc) setVal('mp-extra-' + i, p.acc);
+    if (p.cgw) setVal('mp-cgw-' + i, p.cgw);
+    if (p.ppc) setVal('mp-ppc-' + i, p.ppc);
+    if (p.cL) setVal('mp-cL-' + i, p.cL);
+    if (p.cW) setVal('mp-cW-' + i, p.cW);
+    if (p.cH) setVal('mp-cH-' + i, p.cH);
+    if (p.cL && p.cW && p.cH) calcMultiCBM(i);
+  } else {
+    // 单品模式
+    if (p.name) setVal('productName', p.name);
+    if (p.model) setVal('productModel', p.model);
+    if (p.incTax) { setVal('factoryPriceIncTax', p.incTax); onIncTaxChange(); }
+    if (p.acc) setVal('accessoryCost', p.acc);
+    if (p.other) setVal('otherCost', p.other);
+    if (p.cgw) setVal('cartonGrossWeight', p.cgw);
+    if (p.ppc) setVal('pcsPerCarton', p.ppc);
+    if (p.cL) setVal('cartonL', p.cL);
+    if (p.cW) setVal('cartonW', p.cW);
+    if (p.cH) setVal('cartonH', p.cH);
+    updateTotalCost();
+    updateVolWeight();
+  }
+
+  closeProductDB();
+  showToast('✅ 已从产品库填入');
+}
+
+// 保存当前表单到产品库
+function saveToProductDB(mode) {
+  let p = {};
+  if (mode === 'single') {
+    p = {
+      model: val('productModel'),
+      name: val('productName'),
+      incTax: val('factoryPriceIncTax'),
+      acc: val('accessoryCost'),
+      other: val('otherCost'),
+      cgw: val('cartonGrossWeight'),
+      ppc: val('pcsPerCarton'),
+      cL: val('cartonL'), cW: val('cartonW'), cH: val('cartonH')
+    };
+  } else {
+    // 多品：保存所有产品
+    const items = document.querySelectorAll('#productList .product-item');
+    items.forEach(el => {
+      const idx = el.id.replace('product-', '');
+      const item = {
+        model: val('mp-model-' + idx),
+        name: val('mp-name-' + idx),
+        incTax: val('mp-price-' + idx),
+        acc: val('mp-extra-' + idx),
+        cgw: val('mp-cgw-' + idx),
+        ppc: val('mp-ppc-' + idx),
+        cL: val('mp-cL-' + idx), cW: val('mp-cW-' + idx), cH: val('mp-cH-' + idx)
+      };
+      // 数值字段转数字
+      ['incTax','acc','other','cgw','ppc','cL','cW','cH'].forEach(k => { if (item[k]) item[k] = parseFloat(item[k]) || 0; });
+      if (!item.model && !item.name) return;
+      const data = getProductDB();
+      const existIdx = data.findIndex(d => d.model === item.model && d.name === item.name);
+      if (existIdx >= 0) {
+        if (confirm(`「${item.model || item.name}」已存在，是否覆盖？`)) {
+          data[existIdx] = item;
+          saveProductDBData(data);
+        }
+      } else {
+        data.push(item);
+        saveProductDBData(data);
+      }
+    });
+    const count = document.querySelectorAll('#productList .product-item').length;
+    showToast(`✅ 已保存 ${count} 个产品到产品库`);
+    return;
+  }
+
+  // 数值字段转数字
+  ['incTax','acc','other','cgw','ppc','cL','cW','cH'].forEach(k => { if (p[k]) p[k] = parseFloat(p[k]) || 0; });
+  if (!p.model && !p.name) { showToast('⚠️ 请先填写型号或产品名'); return; }
+
+  const data = getProductDB();
+  const existIdx = data.findIndex(d => d.model === p.model && d.name === p.name);
+  if (existIdx >= 0) {
+    if (confirm(`「${p.model || p.name}」已存在，是否覆盖？`)) {
+      data[existIdx] = p;
+      saveProductDBData(data);
+      showToast('✅ 已更新产品库');
+    }
+  } else {
+    data.push(p);
+    saveProductDBData(data);
+    showToast('✅ 已保存到产品库');
+  }
+}
+
+// 编辑弹窗
+function openPdbEdit(idx) {
+  pdbEditIdx = idx;
+  const data = getProductDB();
+  const p = idx >= 0 ? data[idx] : {};
+  const isNew = idx < 0;
+
+  document.getElementById('pdbEditTitle').textContent = isNew ? '新增产品' : '编辑产品';
+  document.getElementById('pdbEditBody').innerHTML = `
+    <div class="form-group"><label>产品型号</label><input type="text" id="pdb-e-model" value="${p.model || ''}" placeholder="如：CP2026"></div>
+    <div class="form-group"><label>产品名称</label><input type="text" id="pdb-e-name" value="${p.name || ''}" placeholder="如：自动猫砂盆（黑色标准版）"></div>
+    <div class="form-row">
+      <div class="form-group"><label>含税价<span class="unit">元/件</span></label><input type="number" id="pdb-e-incTax" value="${p.incTax || ''}" step="1"></div>
+      <div class="form-group"><label>辅料成本<span class="unit">元/件</span></label><input type="number" id="pdb-e-acc" value="${p.acc || ''}" step="1"></div>
+    </div>
+    <div class="form-row-3" style="margin-bottom:10px;">
+      <div class="form-group"><label>外箱毛重<span class="unit">kg/箱</span></label><input type="number" id="pdb-e-cgw" value="${p.cgw || ''}" step="1"></div>
+      <div class="form-group"><label>装箱数<span class="unit">件/箱</span></label><input type="number" id="pdb-e-ppc" value="${p.ppc || ''}" step="1"></div>
+    </div>
+    <div class="form-group"><label>外箱尺寸<span class="unit">长×宽×高 cm</span></label>
+      <div class="dim-input-group">
+        <input type="number" id="pdb-e-cL" value="${p.cL || ''}" placeholder="长" step="0.1">
+        <span class="dim-x">×</span>
+        <input type="number" id="pdb-e-cW" value="${p.cW || ''}" placeholder="宽" step="0.1">
+        <span class="dim-x">×</span>
+        <input type="number" id="pdb-e-cH" value="${p.cH || ''}" placeholder="高" step="0.1">
+      </div>
+    </div>
+  `;
+  document.getElementById('pdbEditOverlay').style.display = 'flex';
+}
+function closePdbEdit() {
+  document.getElementById('pdbEditOverlay').style.display = 'none';
+  pdbEditIdx = -1;
+}
+
+// 多品模式：从产品库弹窗选择填入到指定产品卡片
+function fillFromPDBMulti(idx) {
+  const modelVal = (document.getElementById('mp-model-' + idx)?.value || '').trim();
+  const nameVal = (document.getElementById('mp-name-' + idx)?.value || '').trim();
+  const data = getProductDB();
+
+  // 如果已有型号或名称，先尝试精确匹配
+  let matches = [];
+  if (modelVal || nameVal) {
+    const kw = (modelVal || nameVal).toUpperCase();
+    matches = data.filter(p =>
+      (p.model || '').toUpperCase().includes(kw) ||
+      (p.name || '').toUpperCase().includes(kw)
+    );
+  } else {
+    matches = data;
+  }
+
+  if (matches.length === 0) { showToast('⚠️ 产品库中无匹配'); return; }
+
+  if (matches.length === 1) {
+    // 只有一个，直接填入
+    applyPDBToMultiCard(idx, matches[0]);
+    return;
+  }
+
+  // 多个匹配：用产品库面板
+  openProductDB();
+  document.getElementById('pdbSearch').value = modelVal || nameVal;
+  renderProductDB();
+}
+
+function applyPDBToMultiCard(idx, p) {
+  if (p.name) { setVal('mp-name-' + idx, p.name); document.getElementById('pname-' + idx).textContent = p.name; }
+  if (p.model) setVal('mp-model-' + idx, p.model);
+  if (p.incTax) setVal('mp-price-' + idx, p.incTax);
+  if (p.acc) setVal('mp-extra-' + idx, p.acc);
+  if (p.cgw) setVal('mp-cgw-' + idx, p.cgw);
+  if (p.ppc) setVal('mp-ppc-' + idx, p.ppc);
+  if (p.cL) setVal('mp-cL-' + idx, p.cL);
+  if (p.cW) setVal('mp-cW-' + idx, p.cW);
+  if (p.cH) setVal('mp-cH-' + idx, p.cH);
+  if (p.cL && p.cW && p.cH) calcMultiCBM(idx);
+  closeProductDB();
+  showToast('✅ 已填入「' + (p.model || p.name) + '」');
+}
+
+// 多品模式：保存单个产品到产品库
+function saveMultiItemToPDB(idx) {
+  const p = {
+    model: val('mp-model-' + idx),
+    name: val('mp-name-' + idx),
+    incTax: parseFloat(val('mp-price-' + idx)) || 0,
+    acc: parseFloat(val('mp-extra-' + idx)) || 0,
+    cgw: parseFloat(val('mp-cgw-' + idx)) || 0,
+    ppc: parseFloat(val('mp-ppc-' + idx)) || 0,
+    cL: parseFloat(val('mp-cL-' + idx)) || 0,
+    cW: parseFloat(val('mp-cW-' + idx)) || 0,
+    cH: parseFloat(val('mp-cH-' + idx)) || 0,
+  };
+  if (!p.model && !p.name) { showToast('⚠️ 请先填写型号或产品名'); return; }
+
+  const data = getProductDB();
+  const existIdx = data.findIndex(d => d.model === p.model && d.name === p.name);
+  if (existIdx >= 0) {
+    if (confirm(`「${p.model || p.name}」已存在，是否覆盖？`)) {
+      data[existIdx] = p;
+      saveProductDBData(data);
+      showToast('✅ 已更新产品库');
+    }
+  } else {
+    data.push(p);
+    saveProductDBData(data);
+    showToast('✅ 已保存到产品库');
+  }
+}
+function savePdbEdit() {
+  const p = {
+    model: document.getElementById('pdb-e-model').value.trim(),
+    name: document.getElementById('pdb-e-name').value.trim(),
+    incTax: parseFloat(document.getElementById('pdb-e-incTax').value) || 0,
+    acc: parseFloat(document.getElementById('pdb-e-acc').value) || 0,
+    cgw: parseFloat(document.getElementById('pdb-e-cgw').value) || 0,
+    ppc: parseFloat(document.getElementById('pdb-e-ppc').value) || 0,
+    cL: parseFloat(document.getElementById('pdb-e-cL').value) || 0,
+    cW: parseFloat(document.getElementById('pdb-e-cW').value) || 0,
+    cH: parseFloat(document.getElementById('pdb-e-cH').value) || 0,
+  };
+  if (!p.model && !p.name) { showToast('⚠️ 请填写型号或产品名'); return; }
+
+  const data = getProductDB();
+  if (pdbEditIdx >= 0) {
+    data[pdbEditIdx] = p;
+  } else {
+    data.push(p);
+  }
+  saveProductDBData(data);
+  closePdbEdit();
+  renderProductDB();
+  showToast(pdbEditIdx >= 0 ? '✅ 已更新' : '✅ 已新增');
+}
+
+// CSV 导出
+function exportProductDB() {
+  const data = getProductDB();
+  if (data.length === 0) { showToast('⚠️ 产品库为空'); return; }
+  let csv = '\uFEFF型号,产品名称,含税价,辅料,外箱毛重,装箱数,长,宽,高\n';
+  data.forEach(p => {
+    csv += `${p.model||''},${p.name||''},${p.incTax||0},${p.acc||0},${p.cgw||''},${p.ppc||''},${p.cL||''},${p.cW||''},${p.cH||''}\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = `产品库_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  showToast('📥 产品库已导出');
+}
+function importProductDB() {
+  document.getElementById('pdbImportFile').click();
+}
+function handleImportCSV(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const lines = ev.target.result.split('\n').filter(l => l.trim());
+      if (lines.length < 2) { showToast('⚠️ CSV 文件为空'); return; }
+      const data = getProductDB();
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',');
+        if (cols.length < 2) continue;
+        const p = {
+          model: (cols[0] || '').trim(),
+          name: (cols[1] || '').trim(),
+          incTax: parseFloat(cols[2]) || 0,
+          acc: parseFloat(cols[3]) || 0,
+          cgw: parseFloat(cols[4]) || 0,
+          ppc: parseFloat(cols[5]) || 0,
+          cL: parseFloat(cols[6]) || 0,
+          cW: parseFloat(cols[7]) || 0,
+          cH: parseFloat(cols[8]) || 0,
+        };
+        if (!p.model && !p.name) continue;
+        // 查重：同型号+同名称则更新
+        const existIdx = data.findIndex(d => d.model === p.model && d.name === p.name);
+        if (existIdx >= 0) data[existIdx] = p;
+        else data.push(p);
+      }
+      saveProductDBData(data);
+      renderProductDB();
+      showToast(`✅ 已导入 ${lines.length - 1} 条产品`);
+    } catch(err) { showToast('⚠️ CSV 格式错误'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// 型号输入时弹出匹配（单品模式）
+function onModelInputSingle() {
+  const input = document.getElementById('productModel');
+  const val = input.value.trim().toUpperCase();
+  let dropdown = document.getElementById('pdbMatchDropdown');
+
+  if (!dropdown) {
+    dropdown = document.createElement('div');
+    dropdown.id = 'pdbMatchDropdown';
+    dropdown.className = 'pdb-match-dropdown';
+    document.body.appendChild(dropdown);
+  }
+
+  if (val.length < 2) { dropdown.classList.remove('show'); return; }
+
+  const data = getProductDB();
+  const matches = data.filter(p =>
+    (p.model || '').toUpperCase().includes(val) ||
+    (p.name || '').toUpperCase().includes(val)
+  ).slice(0, 8);
+
+  if (matches.length === 0) { dropdown.classList.remove('show'); return; }
+
+  const rect = input.getBoundingClientRect();
+  dropdown.style.top = (rect.bottom + window.scrollY + 4) + 'px';
+  dropdown.style.left = rect.left + 'px';
+  dropdown.innerHTML = matches.map(p => {
+    const boxInfo = p.cL && p.cW && p.cH ? `${p.cL}×${p.cW}×${p.cH}cm` : '';
+    return `<div class="pdb-match-item" onclick="fillFromPDBDropdown('${(p.model||'').replace(/'/g,"\\'")}','${(p.name||'').replace(/'/g,"\\'")}')">
+      <div class="mi-model">${p.model || '-'}</div>
+      <div class="mi-name">${p.name || ''}</div>
+      <div class="mi-detail">含税¥${p.incTax||0} ${boxInfo} ${p.ppc ? p.ppc+'pcs/箱' : ''} ${p.cgw ? p.cgw+'kg' : ''}</div>
+    </div>`;
+  }).join('');
+  dropdown.classList.add('show');
+}
+
+function fillFromPDBDropdown(model, name) {
+  const data = getProductDB();
+  const p = data.find(d => d.model === model && d.name === name);
+  if (!p) return;
+  document.getElementById('productModel').value = p.model || '';
+  if (p.name) document.getElementById('productName').value = p.name;
+  if (p.incTax) { document.getElementById('factoryPriceIncTax').value = p.incTax; onIncTaxChange(); }
+  if (p.acc) document.getElementById('accessoryCost').value = p.acc;
+  if (p.other) document.getElementById('otherCost').value = p.other;
+  if (p.cgw) document.getElementById('cartonGrossWeight').value = p.cgw;
+  if (p.ppc) document.getElementById('pcsPerCarton').value = p.ppc;
+  if (p.cL) document.getElementById('cartonL').value = p.cL;
+  if (p.cW) document.getElementById('cartonW').value = p.cW;
+  if (p.cH) document.getElementById('cartonH').value = p.cH;
+  updateTotalCost();
+  updateVolWeight();
+  document.getElementById('pdbMatchDropdown')?.classList.remove('show');
+  showToast('✅ 已从产品库填入');
+}
+
+// 关闭匹配下拉（点击其他区域）
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('pdbMatchDropdown');
+  if (dropdown && !e.target.closest('#pdbMatchDropdown') && !e.target.closest('#productModel')) {
+    dropdown.classList.remove('show');
+  }
+});
+
 // ========== 初始化 ==========
 function init() {
   loadHistory();
   refreshRate();
   selectShipping(document.querySelector('.shipping-mode-btn.active'));
   updateRequiredHint();
+  updatePDBCount();
+  // 单品型号输入触发产品库匹配
+  const modelInput = document.getElementById('productModel');
+  if (modelInput) modelInput.addEventListener('input', onModelInputSingle);
   // 恢复上次保存的表单数据
   const restored = restoreFormData();
   if (restored) {
@@ -2001,6 +2596,10 @@ function addProductItem() {
     <button class="remove-product-btn" onclick="removeProductItem(${idx})" title="删除">×</button>
     <div><span class="product-num">${idx}</span><span class="product-name-inline" id="pname-${idx}">产品 ${idx}</span></div>
     <div class="product-fields">
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <button onclick="fillFromPDBMulti(${idx})" style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:var(--primary);transition:all 0.15s;" title="从产品库填入">📦 从产品库填入</button>
+        <button onclick="saveMultiItemToPDB(${idx})" style="background:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;color:#7c3aed;transition:all 0.15s;" title="保存此产品到产品库">💾 存入产品库</button>
+      </div>
       <!-- 智能填充（多品） -->
       <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:8px 10px;margin-bottom:10px;">
         <div style="display:flex;gap:6px;align-items:center;">
