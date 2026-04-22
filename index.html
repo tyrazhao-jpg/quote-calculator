@@ -2315,8 +2315,8 @@ function selectShipping(btn) {
     express: ['exw', 'dap'],       // 快递：EXW + DAP（门到门）
     air:     ['exw', 'ddp'],       // 空派：EXW + DDP（含清关门到门）
     sea_dap: ['exw', 'ddp'],       // 海派：EXW + DDP（含清关门到门）
-    lcl:     ['exw', 'fob', 'cif'],// 海运LCL：EXW + FOB + CIF（到港）
-    fcl:     ['exw', 'fob', 'cif'] // 海运FCL：EXW + FOB + CIF（到港）
+    lcl:     ['exw', 'fob'],       // 海运LCL：EXW + FOB
+    fcl:     ['exw', 'fob']        // 海运FCL：EXW + FOB
   };
   const recommended = termRecommend[currentShippingMode] || ['exw', 'fob', 'cif'];
   selectedTerms = new Set(recommended);
