@@ -2368,11 +2368,26 @@ function selectShipping(btn) {
     hint.textContent = '（按体积计费，不适用）';
   }
 
+  // 先同步术语默认勾选（在UI刷新之前）
+  const termRecommend = {
+    exw_pickup: ['exw'],          // EXW自提：只选EXW
+    express: ['exw', 'dap'],       // 快递：EXW + DAP（门到门）
+    air:     ['exw', 'ddp'],       // 空派：EXW + DDP（含清关门到门）
+    sea_dap: ['exw', 'ddp'],       // 海派：EXW + DDP（含清关门到门）
+    lcl:     ['exw', 'fob'],       // 海运LCL：EXW + FOB
+    fcl:     ['exw', 'fob']        // 海运FCL：EXW + FOB
+  };
+  const recommended = termRecommend[currentShippingMode] || ['exw', 'fob', 'cif'];
+  selectedTerms = new Set(recommended);
+  syncTermUI();
+  updateRequiredHint();
+
   // 运费字段显示控制
   const isFCL = currentShippingMode === 'fcl';
   const isLCL = currentShippingMode === 'lcl';
   const isSea = isFCL || isLCL;
   const isEXW = currentShippingMode === 'exw_pickup';
+  const hasFobOrCif = selectedTerms.has('fob') || selectedTerms.has('cif');
   document.getElementById('freightFields').style.display = isEXW ? 'none' : 'block';
   // 多品模式下显示多品运费区域
   if (quoteMode === 'multi') {
