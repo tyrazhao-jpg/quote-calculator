@@ -231,6 +231,55 @@
     .summary-cards { grid-template-columns: repeat(3, 1fr); }
   }
 
+  /* 利润率快速滑块 */
+  .profit-slider-section {
+    padding: 14px;
+    background: linear-gradient(135deg, #fefce8, #fffbeb);
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+  .profit-slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .profit-slider-header .ps-label { font-size: 13px; font-weight: 600; color: #92400e; }
+  .profit-slider-header .ps-value {
+    font-size: 22px; font-weight: 800; color: #b45309; font-variant-numeric: tabular-nums;
+    min-width: 70px; text-align: right;
+  }
+  .profit-slider-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .profit-slider-row .bound { font-size: 11px; color: #a16207; font-weight: 500; white-space: nowrap; }
+  .profit-slider-row input[type="range"] {
+    flex: 1; height: 8px; -webkit-appearance: none; appearance: none;
+    background: linear-gradient(to right, #fde68a, #f59e0b);
+    border-radius: 4px; outline: none; cursor: pointer;
+  }
+  .profit-slider-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 22px; height: 22px;
+    background: #f59e0b; border: 3px solid white; border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2); cursor: grab;
+  }
+  .profit-slider-row input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
+  .profit-slider-row input[type="range"]::-moz-range-thumb {
+    width: 22px; height: 22px;
+    background: #f59e0b; border: 3px solid white; border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2); cursor: grab;
+  }
+  .profit-slider-quick-btns {
+    display: flex; gap: 6px; margin-top: 8px; justify-content: center;
+  }
+  .profit-slider-quick-btns button {
+    padding: 3px 10px; font-size: 11px; font-weight: 600; border-radius: 4px;
+    border: 1px solid #fde68a; background: white; color: #92400e; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .profit-slider-quick-btns button:hover { background: #f59e0b; color: white; border-color: #f59e0b; }
+
   /* 出货方式选择 */
   .shipping-modes {
     display: flex;
@@ -917,6 +966,26 @@
           <h2>💰 运费与利润</h2>
         </div>
         <div class="card-body">
+          <!-- 利润率快速调整 -->
+          <div class="profit-slider-section">
+            <div class="profit-slider-header">
+              <span class="ps-label">💰 利润率</span>
+              <span class="ps-value" id="profitSliderValue">20%</span>
+            </div>
+            <div class="profit-slider-row">
+              <span class="bound">0%</span>
+              <input type="range" id="profitSlider" min="0" max="80" step="0.5" value="20" oninput="onProfitSliderChange(this.value)">
+              <span class="bound">80%</span>
+            </div>
+            <div class="profit-slider-quick-btns">
+              <button onclick="setProfitSlider(10)">10%</button>
+              <button onclick="setProfitSlider(15)">15%</button>
+              <button onclick="setProfitSlider(20)">20%</button>
+              <button onclick="setProfitSlider(25)">25%</button>
+              <button onclick="setProfitSlider(30)">30%</button>
+            </div>
+          </div>
+
           <!-- 目的国家 -->
           <div class="form-group">
             <label>目的国家/地区</label>
@@ -1141,10 +1210,10 @@
           <div class="divider"></div>
 
           <label class="product-tier-toggle" style="margin-bottom:10px;">
-            <input type="checkbox" id="singleUseTiers" onchange="document.getElementById('singleTierSettings').classList.toggle('show',this.checked)">
+            <input type="checkbox" id="singleUseTiers" checked onchange="document.getElementById('singleTierSettings').classList.toggle('show',this.checked)">
             启用阶梯报价
           </label>
-          <div class="product-tier-settings" id="singleTierSettings">
+          <div class="product-tier-settings show" id="singleTierSettings">
             <div id="singleTierList">
               <div class="tier-row">
                 <input type="number" placeholder="MOQ 数量" style="width:40%;" class="tier-qty" value="100">
@@ -1311,6 +1380,47 @@ const shippingConfig = {
   lcl:     { label: '海运LCL', labelEn: 'Sea LCL', unit: 'CNY/m³', rateKey: 'sea', volDiv: 0 },
   fcl:     { label: '海运FCL', labelEn: 'Sea FCL', unit: '整柜', rateKey: 'sea', volDiv: 0 }
 };
+
+// ========== 利润率快速调整 ==========
+function onProfitSliderChange(val) {
+  const v = parseFloat(val);
+  document.getElementById('profitSliderValue').textContent = v + '%';
+  // 阶梯模式：批量同步所有阶梯行的利润率
+  const tierCb = document.getElementById('singleUseTiers');
+  if (tierCb && tierCb.checked) {
+    document.querySelectorAll('#singleTierList .tier-row').forEach(row => {
+      const inp = row.querySelector('.tier-profit');
+      if (inp) inp.value = v;
+    });
+  }
+  // 多品模式：同步所有产品的阶梯利润率
+  document.querySelectorAll('#productList .product-item').forEach(el => {
+    const id = el.id.replace('product-', '');
+    const cb = document.getElementById('mp-useTiers-' + id);
+    if (cb && cb.checked) {
+      document.querySelectorAll('#mp-tierList-' + id + ' .tier-row').forEach(row => {
+        const inp = row.querySelector('.tier-profit');
+        if (inp) inp.value = v;
+      });
+    }
+  });
+  // 如果已有计算结果（结果区域可见），实时重算
+  const resultContent = document.getElementById('resultContent');
+  if (resultContent && !resultContent.classList.contains('hidden')) {
+    calculate();
+  }
+}
+
+function setProfitSlider(val) {
+  const slider = document.getElementById('profitSlider');
+  slider.value = val;
+  onProfitSliderChange(val);
+}
+
+// 从滑块获取当前利润率
+function getSliderProfitRate() {
+  return parseFloat(document.getElementById('profitSlider').value) || 20;
+}
 
 // ========== 术语选择 ==========
 function toggleTerm(el) {
@@ -1516,6 +1626,7 @@ function saveFormData() {
     });
     // 阶梯报价
     data.singleUseTiers = document.getElementById('singleUseTiers')?.checked || false;
+    data.profitSlider = parseFloat(document.getElementById('profitSlider')?.value) || 20;
     data.singleTiers = [];
     document.querySelectorAll('#singleTierList .tier-row').forEach(row => {
       const qtyInput = row.querySelector('.tier-qty');
@@ -1743,6 +1854,11 @@ function restoreFormData() {
       updateRequiredHint();
     }
 
+    // 利润率滑块
+    if (data.profitSlider !== undefined) {
+      setProfitSlider(data.profitSlider);
+    }
+
     // 阶梯
     if (data.singleUseTiers) {
       const cb = document.getElementById('singleUseTiers');
@@ -1814,6 +1930,9 @@ function clearForm() {
     if (icon) icon.textContent = checked ? '✓' : '';
   });
   updateRequiredHint();
+
+  // 重置利润率滑块
+  setProfitSlider(20);
 
   // 重置阶梯
   const tierCb = document.getElementById('singleUseTiers');
@@ -3389,7 +3508,7 @@ function calculateMulti() {
   });
 
   // 计算报价
-  const defaultProfitRate = 0.20;
+  const defaultProfitRate = getSliderProfitRate() / 100;
   const anyProductHasTiers = products.some(p => p.useTiers && p.tiers.length > 0);
 
   products.forEach(p => {
@@ -3749,9 +3868,10 @@ function calculate() {
     }
   }
 
-  // 阶梯设置（从动态输入读取，未启用则固定 20%）
+  // 阶梯设置（从动态输入读取，未启用则使用滑块利润率）
   const tiersInput = getSingleTiers();
-  const tiers = tiersInput.length > 0 ? tiersInput : [{ qty: 1, profit: 20 }];
+  const sliderProfit = getSliderProfitRate();
+  const tiers = tiersInput.length > 0 ? tiersInput : [{ qty: 1, profit: sliderProfit }];
 
   const totalCostCNY = factoryPriceIncTax + accessoryCost + otherCost;
 
