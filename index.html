@@ -952,7 +952,70 @@
 
           <!-- 运费输入 -->
           <div id="freightFields">
-            <!-- 多品模式运费 -->
+            <!-- 海运LCL明细费用（选LCL+FOB/CIF时显示，单品多品共用） -->
+            <div id="lclDetailFields" style="display:none;">
+              <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                <div style="font-size:12px;color:#1e40af;font-weight:600;margin-bottom:6px;">🚢 海运LCL 费用明细<span class="hint">（整批总价，按CBM分摊）</span></div>
+                <div class="form-row" style="margin-bottom:6px;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>国内运费<span class="unit">CNY（整批）</span></label>
+                    <input type="number" id="lclDomesticFreight" placeholder="如 800" step="1" value="0">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>港杂费<span class="unit">CNY（整批）</span></label>
+                    <input type="number" id="lclPortCharge" placeholder="如 500" step="1" value="0">
+                  </div>
+                </div>
+                <div class="form-row" id="lclCifFields" style="display:none;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>海运费<span class="unit">CNY（整批）</span></label>
+                    <input type="number" id="lclSeaFreight" placeholder="如 5000" step="1" value="0">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>保险费<span class="unit">CNY（整批）</span></label>
+                    <input type="number" id="lclInsurance" placeholder="如 300" step="1" value="0">
+                  </div>
+                </div>
+                <div style="font-size:11px;color:#6b7280;margin-top:6px;padding-top:6px;border-top:1px dashed #bfdbfe;">
+                  💡 未填写时自动按 <b>EXW×2.5%</b> 估算国内物流 + <b>FOB×0.3%</b> 估算保险费
+                </div>
+              </div>
+            </div>
+            <!-- 海运FCL明细费用（选FCL+FOB/CIF时显示，单品多品共用） -->
+            <div id="fclDetailFields" style="display:none;">
+              <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 12px;margin-bottom:8px;">
+                <div style="font-size:12px;color:#166534;font-weight:600;margin-bottom:6px;">🚢 海运FCL 费用明细<span class="hint">（整批总价，按CBM分摊）</span></div>
+                <div class="form-row" style="margin-bottom:6px;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>拖车费<span class="unit">CNY（整批）</span></label>
+                    <input type="number" id="fclTruckFee" placeholder="如 2000" step="1" value="0">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>港杂费<span class="unit">CNY（整批）</span></label>
+                    <input type="number" id="fclPortCharge" placeholder="如 1200" step="1" value="0">
+                  </div>
+                </div>
+                <div class="form-row" id="fclCifFields" style="display:none;">
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>海运费<span class="unit">CNY（整批）</span></label>
+                    <input type="number" id="fclSeaFreight" placeholder="如 15000" step="1" value="0">
+                  </div>
+                  <div class="form-group" style="margin-bottom:0;">
+                    <label>保险费<span class="unit">CNY（整批）</span></label>
+                    <input type="number" id="fclInsurance" placeholder="如 500" step="1" value="0">
+                  </div>
+                </div>
+                <!-- FCL 装柜数量 -->
+                <div class="form-group" style="margin-bottom:0;">
+                  <label>FCL 装柜数量<span class="unit">件</span></label>
+                  <input type="number" id="fclQty" placeholder="如 500" step="1" value="0">
+                </div>
+                <div style="font-size:11px;color:#6b7280;margin-top:6px;padding-top:6px;border-top:1px dashed #86efac;">
+                  💡 未填写时自动按 <b>EXW×2.5%</b> 估算拖车+港杂 + <b>FOB×0.3%</b> 估算保险费
+                </div>
+              </div>
+            </div>
+            <!-- 多品模式运费（非海运时显示） -->
             <div id="multiFreightSection" style="display:none;">
               <!-- 切换按钮 -->
               <div style="display:flex;gap:6px;margin-bottom:10px;">
@@ -989,7 +1052,8 @@
             </div>
             <!-- 单品模式：运费单价等（多品时隐藏） -->
             <div id="singleFreightSection">
-            <div class="form-row">
+            <!-- 非海运模式：运费单价 + 额外费用 -->
+            <div class="form-row" id="standardFreightRow">
               <div class="form-group" id="freightRateGroup">
                 <label>运费单价<span class="unit" id="freightUnit">CNY/kg</span></label>
                 <input type="number" id="freightRate" placeholder="如 5.5" step="1" value="">
@@ -1002,23 +1066,6 @@
                 <input type="number" id="extraFreightCost" placeholder="如 200" step="1" value="0">
               </div>
             </div>
-            <!-- FCL 专属字段（两列） -->
-            <div class="form-row" id="fclFields" style="display:none;">
-              <div class="form-group">
-                <label>FCL 运费<span class="unit">CNY/整柜</span></label>
-                <input type="number" id="fclTotalFreight" placeholder="如 25000" step="1" value="0">
-              </div>
-              <div class="form-group">
-                <label>FCL 装柜数量<span class="unit">件</span></label>
-                <input type="number" id="fclQty" placeholder="如 500" step="1" value="0">
-              </div>
-            </div>
-            <!-- FCL 额外费用（非FCL时隐藏） -->
-            <div class="form-row" id="fclExtraRow" style="display:none;">
-              <div class="form-group" id="fclExtraCostGroup">
-                <label>额外费用<span class="unit">CNY/单票</span> <span class="hint">（燃油附加费、查验费等）</span></label>
-                <input type="number" id="fclExtraFreightCost" placeholder="如 200" step="1" value="0">
-              </div>
             </div>
             </div><!-- /singleFreightSection -->
           </div>
@@ -1277,6 +1324,8 @@ function toggleTerm(el) {
   }
 
   updateRequiredHint();
+  // 术语切换时联动海运明细字段显隐
+  updateSeaFreightFields();
 }
 
 // 同步术语 UI 状态（用于自动推荐时批量更新）
@@ -1313,6 +1362,33 @@ function updateRequiredHint() {
 
   // 公共必填
   hint.innerHTML = '📋 必填：汇率' + (items.length > 0 ? '；' + items.join('；') : '');
+}
+
+/** 更新海运明细字段显隐（术语切换时调用） */
+function updateSeaFreightFields() {
+  const isLCL = currentShippingMode === 'lcl';
+  const isFCL = currentShippingMode === 'fcl';
+  const isSea = isLCL || isFCL;
+  const hasFobOrCif = selectedTerms.has('fob') || selectedTerms.has('cif');
+
+  // LCL明细：选了LCL + FOB或CIF时显示
+  document.getElementById('lclDetailFields').style.display = isLCL && hasFobOrCif ? 'block' : 'none';
+  // FCL明细：选了FCL + FOB或CIF时显示
+  document.getElementById('fclDetailFields').style.display = isFCL && hasFobOrCif ? 'block' : 'none';
+
+  // 多品模式：海运明细显示时隐藏标准运费区域
+  if (quoteMode === 'multi') {
+    document.getElementById('multiFreightSection').style.display = (isSea && hasFobOrCif) ? 'none' : 'block';
+  }
+
+  updateSeaCifFieldsVisibility();
+}
+
+/** 更新 CIF 专属费用字段（海运费+保险费）的显隐 */
+function updateSeaCifFieldsVisibility() {
+  const hasCif = selectedTerms.has('cif');
+  document.getElementById('lclCifFields').style.display = hasCif ? 'grid' : 'none';
+  document.getElementById('fclCifFields').style.display = hasCif ? 'grid' : 'none';
 }
 
 // 术语顺序（用于结果输出排序）
@@ -1395,6 +1471,15 @@ function saveFormData() {
     data.fclTotalFreight = val('fclTotalFreight');
     data.fclQty = val('fclQty');
     data.fclExtraFreightCost = val('fclExtraFreightCost');
+    // 海运明细费用
+    data.lclDomesticFreight = val('lclDomesticFreight');
+    data.lclPortCharge = val('lclPortCharge');
+    data.lclSeaFreight = val('lclSeaFreight');
+    data.lclInsurance = val('lclInsurance');
+    data.fclTruckFee = val('fclTruckFee');
+    data.fclPortCharge = val('fclPortCharge');
+    data.fclSeaFreight = val('fclSeaFreight');
+    data.fclInsurance = val('fclInsurance');
     // 术语勾选
     data.terms = [];
     document.querySelectorAll('.term-check').forEach(el => {
@@ -1605,6 +1690,15 @@ function restoreFormData() {
     setVal('fclTotalFreight', data.fclTotalFreight);
     setVal('fclQty', data.fclQty);
     setVal('fclExtraFreightCost', data.fclExtraFreightCost);
+    // 海运明细费用
+    setVal('lclDomesticFreight', data.lclDomesticFreight);
+    setVal('lclPortCharge', data.lclPortCharge);
+    setVal('lclSeaFreight', data.lclSeaFreight);
+    setVal('lclInsurance', data.lclInsurance);
+    setVal('fclTruckFee', data.fclTruckFee);
+    setVal('fclPortCharge', data.fclPortCharge);
+    setVal('fclSeaFreight', data.fclSeaFreight);
+    setVal('fclInsurance', data.fclInsurance);
 
     // 术语
     if (data.terms) {
@@ -1660,6 +1754,8 @@ function clearForm() {
   ['productName','productModel','factoryPriceExTax','factoryPriceIncTax','accessoryCost','otherCost',
    'cartonGrossWeight','pcsPerCarton','totalCartons','cartonL','cartonW','cartonH',
    'chargeableWeight','freightRate','extraFreightCost','fclTotalFreight','fclQty','fclExtraFreightCost',
+   'lclDomesticFreight','lclPortCharge','lclSeaFreight','lclInsurance',
+   'fclTruckFee','fclPortCharge','fclSeaFreight','fclInsurance',
    'destCountryCustom','shippingDaysMin','shippingDaysMax',
    'multiFreightRate','multiExtraFreightCost','multiTotalFreight'].forEach(id => setVal(id, ''));
 
@@ -2272,30 +2368,46 @@ function selectShipping(btn) {
     hint.textContent = '（按体积计费，不适用）';
   }
 
-  // FCL 字段显示控制
+  // 运费字段显示控制
   const isFCL = currentShippingMode === 'fcl';
+  const isLCL = currentShippingMode === 'lcl';
+  const isSea = isFCL || isLCL;
   const isEXW = currentShippingMode === 'exw_pickup';
   document.getElementById('freightFields').style.display = isEXW ? 'none' : 'block';
   // 多品模式下显示多品运费区域
   if (quoteMode === 'multi') {
-    document.getElementById('multiFreightSection').style.display = isEXW ? 'none' : 'block';
-    document.getElementById('singleFreightSection').style.display = 'none';
-    if (!isEXW) {
-      const unitText = currentShippingMode === 'lcl' ? 'm³' : 'kg';
-      document.getElementById('multiFreightUnit').textContent = 'CNY/' + unitText;
-      const presetVal = preset[config.rateKey];
-      document.getElementById('multiFreightPresetValue').textContent = presetVal;
-      document.getElementById('multiFreightPresetUnit').textContent = unitText;
-      document.getElementById('multiFreightPresetHint').style.display = 'block';
-      if (multiFreightMode === 'rate') calcMultiTotalFreight();
+    // 多品模式：海运时显示明细费用，非海运显示运费单价/总额
+    if (isSea && hasFobOrCif) {
+      document.getElementById('lclDetailFields').style.display = isLCL ? 'block' : 'none';
+      document.getElementById('fclDetailFields').style.display = isFCL ? 'block' : 'none';
+      document.getElementById('multiFreightSection').style.display = 'none';
+    } else {
+      document.getElementById('lclDetailFields').style.display = 'none';
+      document.getElementById('fclDetailFields').style.display = 'none';
+      document.getElementById('multiFreightSection').style.display = isEXW ? 'none' : 'block';
+      if (!isEXW) {
+        const unitText = currentShippingMode === 'lcl' ? 'm³' : 'kg';
+        document.getElementById('multiFreightUnit').textContent = 'CNY/' + unitText;
+        const presetVal = preset[config.rateKey];
+        document.getElementById('multiFreightPresetValue').textContent = presetVal;
+        document.getElementById('multiFreightPresetUnit').textContent = unitText;
+        document.getElementById('multiFreightPresetHint').style.display = 'block';
+        if (multiFreightMode === 'rate') calcMultiTotalFreight();
+      }
     }
   } else {
-    document.getElementById('fclFields').style.display = isFCL ? 'grid' : 'none';
-    document.getElementById('freightRateGroup').style.display = (isFCL || isEXW) ? 'none' : 'block';
+    // 单品模式
     document.getElementById('multiFreightSection').style.display = 'none';
     document.getElementById('singleFreightSection').style.display = 'block';
-    document.getElementById('extraCostGroup').style.display = (isFCL || isEXW) ? 'none' : 'block';
-    document.getElementById('fclExtraRow').style.display = isFCL ? 'grid' : 'none';
+    // 标准运费单价行（非海运 + 非EXW 时显示）
+    document.getElementById('standardFreightRow').style.display = (isSea || isEXW) ? 'none' : 'grid';
+    document.getElementById('extraCostGroup').style.display = (isSea || isEXW) ? 'none' : 'block';
+    // 海运LCL明细（选了LCL + FOB/CIF 时显示）
+    document.getElementById('lclDetailFields').style.display = isLCL && (selectedTerms.has('fob') || selectedTerms.has('cif')) ? 'block' : 'none';
+    // 海运FCL明细（选了FCL + FOB/CIF 时显示）
+    document.getElementById('fclDetailFields').style.display = isFCL && (selectedTerms.has('fob') || selectedTerms.has('cif')) ? 'block' : 'none';
+    // 联动 CIF 专属字段
+    updateSeaCifFieldsVisibility();
   }
 
   // 显示运费预设参考（仅单品模式）
@@ -2479,24 +2591,34 @@ function switchQuoteMode(mode, btn) {
   document.getElementById('singleModeContent').classList.toggle('hidden', mode !== 'single');
   document.getElementById('multiModeContent').classList.toggle('hidden', mode !== 'multi');
   // 运费区域：多品显示运费单价+整批总额，单品显示运费单价/FCL
+  const isSea = currentShippingMode === 'lcl' || currentShippingMode === 'fcl';
+  const hasFobOrCif2 = selectedTerms.has('fob') || selectedTerms.has('cif');
   if (mode === 'multi') {
     const isEXW = currentShippingMode === 'exw_pickup';
     document.getElementById('freightFields').style.display = isEXW ? 'none' : 'block';
-    document.getElementById('multiFreightSection').style.display = isEXW ? 'none' : 'block';
     document.getElementById('singleFreightSection').style.display = 'none';
-    const unitText = ['express', 'air', 'sea_dap'].includes(currentShippingMode) ? 'kg' : 'm³';
-    document.getElementById('multiFreightUnit').textContent = 'CNY/' + unitText;
-    switchMultiFreightMode('rate');
+    if (isSea && hasFobOrCif2) {
+      // 海运 + FOB/CIF：显示明细费用
+      document.getElementById('multiFreightSection').style.display = 'none';
+      document.getElementById('lclDetailFields').style.display = (currentShippingMode === 'lcl') ? 'block' : 'none';
+      document.getElementById('fclDetailFields').style.display = (currentShippingMode === 'fcl') ? 'block' : 'none';
+    } else {
+      document.getElementById('multiFreightSection').style.display = isEXW ? 'none' : 'block';
+      document.getElementById('lclDetailFields').style.display = 'none';
+      document.getElementById('fclDetailFields').style.display = 'none';
+      const unitText = ['express', 'air', 'sea_dap'].includes(currentShippingMode) ? 'kg' : 'm³';
+      document.getElementById('multiFreightUnit').textContent = 'CNY/' + unitText;
+      switchMultiFreightMode('rate');
+    }
   } else {
     document.getElementById('multiFreightSection').style.display = 'none';
     document.getElementById('singleFreightSection').style.display = 'block';
-    const isFCL = currentShippingMode === 'fcl';
     const isEXW = currentShippingMode === 'exw_pickup';
     document.getElementById('freightFields').style.display = isEXW ? 'none' : 'block';
-    document.getElementById('fclFields').style.display = isFCL ? 'grid' : 'none';
-    document.getElementById('freightRateGroup').style.display = (isFCL || isEXW) ? 'none' : 'block';
-    document.getElementById('extraCostGroup').style.display = (isFCL || isEXW) ? 'none' : 'block';
-    document.getElementById('fclExtraRow').style.display = isFCL ? 'grid' : 'none';
+    document.getElementById('standardFreightRow').style.display = (isSea || isEXW) ? 'none' : 'grid';
+    document.getElementById('extraCostGroup').style.display = (isSea || isEXW) ? 'none' : 'block';
+    document.getElementById('lclDetailFields').style.display = (currentShippingMode === 'lcl' && hasFobOrCif2) ? 'block' : 'none';
+    document.getElementById('fclDetailFields').style.display = (currentShippingMode === 'fcl' && hasFobOrCif2) ? 'block' : 'none';
   }
   // EXW自提在多品模式下无意义
   if (mode === 'multi' && currentShippingMode === 'exw_pickup') {
@@ -3148,66 +3270,129 @@ function calculateMulti() {
   }
 
   const needsFreight = selectedTerms.has('cif') || selectedTerms.has('dap') || selectedTerms.has('ddp');
+  const isSeaMulti = currentShippingMode === 'lcl' || currentShippingMode === 'fcl';
+  const hasFobOrCifMulti = selectedTerms.has('fob') || selectedTerms.has('cif');
   if (multiFreightMode === 'rate') calcMultiTotalFreight();
   const totalFreightCNY = parseFloat(document.getElementById('multiTotalFreight').value) || 0;
-  if (needsFreight && totalFreightCNY <= 0) { showToast('⚠️ 需要运费条款，请填写运费'); return; }
+  if (needsFreight && !isSeaMulti && totalFreightCNY <= 0) { showToast('⚠️ 需要运费条款，请填写运费'); return; }
+
+  // 海运模式下读取明细费用（整批总额，按CBM分摊到各产品）
+  let multiSeaDomestic = 0, multiSeaPort = 0, multiSeaFreightVal = 0, multiSeaInsurance = 0;
+  if (isSeaMulti && hasFobOrCifMulti) {
+    if (currentShippingMode === 'lcl') {
+      multiSeaDomestic = parseFloat(document.getElementById('lclDomesticFreight').value) || 0;
+      multiSeaPort = parseFloat(document.getElementById('lclPortCharge').value) || 0;
+      multiSeaFreightVal = parseFloat(document.getElementById('lclSeaFreight').value) || 0;
+      multiSeaInsurance = parseFloat(document.getElementById('lclInsurance').value) || 0;
+    } else {
+      multiSeaDomestic = parseFloat(document.getElementById('fclTruckFee').value) || 0;
+      multiSeaPort = parseFloat(document.getElementById('fclPortCharge').value) || 0;
+      multiSeaFreightVal = parseFloat(document.getElementById('fclSeaFreight').value) || 0;
+      multiSeaInsurance = parseFloat(document.getElementById('fclInsurance').value) || 0;
+    }
+  }
 
   // 计算每个产品的总成本
   products.forEach(p => {
     p.totalCostCNY = p.price + p.extra;
     p.totalCostUSD = p.totalCostCNY / rate;
-    // 计费重/体积
-    const volDiv = shippingConfig[currentShippingMode]?.volDiv || 6000;
-    const volW = (p.cgw > 0 && volDiv > 0) ? Math.max(p.cgw, p.cgw) : 0; // 简化：用实重
-    p.totalWeight = p.cgw * p.cartons; // 总实重
-    p.totalCBM = p.cbm * p.cartons; // 总体积
+    // 体积（海运分摊用）
+    p.totalCBM = p.cbm * p.cartons;
+    p.totalWeight = p.cgw * p.cartons;
   });
 
   // 分摊运费
+  let totalFreightForCalc = totalFreightCNY;
+  if (isSeaMulti && hasFobOrCifMulti) {
+    // 海运模式：明细费用总和
+    totalFreightForCalc = multiSeaDomestic + multiSeaPort + multiSeaFreightVal + multiSeaInsurance;
+  }
   const byWeight = ['express', 'air', 'sea_dap'].includes(currentShippingMode);
   let totalBase = 0;
   products.forEach(p => {
     totalBase += byWeight ? p.totalWeight : p.totalCBM;
   });
 
+  // 海运明细费用分摊
+  let multiFobCostTotal = 0, multiCifCostTotal = 0;
+  let multiSeaUseEstimate = false; // 是否使用了估算
+  if (isSeaMulti && hasFobOrCifMulti) {
+    multiFobCostTotal = multiSeaDomestic + multiSeaPort;
+    multiCifCostTotal = multiSeaFreightVal + multiSeaInsurance;
+    if (multiFobCostTotal === 0 && multiCifCostTotal === 0) {
+      multiSeaUseEstimate = true;
+    }
+  }
+
   products.forEach(p => {
-    if (totalBase > 0) {
-      const ratio = (byWeight ? p.totalWeight : p.totalCBM) / totalBase;
-      p.freightTotalCNY = totalFreightCNY * ratio;
+    if (isSeaMulti && hasFobOrCifMulti && !multiSeaUseEstimate) {
+      // 海运按 CBM 分摊明细费用（有实际数据时）
+      if (totalBase > 0) {
+        const ratio = p.totalCBM / totalBase;
+        p.fobFreightCNY = multiFobCostTotal * ratio;
+        p.cifFreightCNY = multiCifCostTotal * ratio;
+      } else {
+        p.fobFreightCNY = multiFobCostTotal / products.length;
+        p.cifFreightCNY = multiCifCostTotal / products.length;
+      }
+      p.freightTotalCNY = p.fobFreightCNY + p.cifFreightCNY;
     } else {
-      // 均摊
-      p.freightTotalCNY = totalFreightCNY / products.length;
+      // 非海运 或 海运估算模式：统一按重量/体积分摊（估算模式下海运也走这里）
+      if (isSeaMulti && multiSeaUseEstimate) {
+        // 海运估算模式下不按明细分摊，运费在报价计算时按百分比算
+        p.fobFreightCNY = 0;
+        p.cifFreightCNY = 0;
+        p.freightTotalCNY = 0;
+      } else if (totalBase > 0) {
+        const ratio = (byWeight ? p.totalWeight : p.totalCBM) / totalBase;
+        p.freightTotalCNY = totalFreightForCalc * ratio;
+      } else {
+        p.freightTotalCNY = totalFreightForCalc / products.length;
+      }
     }
     p.freightPerPcCNY = p.qty > 0 ? p.freightTotalCNY / p.qty : 0;
     p.freightPerPcUSD = p.freightPerPcCNY / rate;
   });
 
   // 计算报价
-  // 多品模式：默认利润率 20%，如产品启用了阶梯则用产品的最后阶梯
   const defaultProfitRate = 0.20;
-  const insuranceRate = 0.003;
   const anyProductHasTiers = products.some(p => p.useTiers && p.tiers.length > 0);
 
   products.forEach(p => {
-    // 确定该产品使用的利润率
     let profitRate;
     if (p.useTiers && p.tiers.length > 0) {
-      profitRate = p.tiers[p.tiers.length - 1].profit / 100; // 最后阶梯为主推
+      profitRate = p.tiers[p.tiers.length - 1].profit / 100;
     } else {
       profitRate = defaultProfitRate;
     }
     const exwUSD = p.totalCostUSD * (1 + profitRate);
-    const domesticLogistics = exwUSD * 0.025;
+
+    let domesticLogistics = 0;
+    let cifSeaFreightPerPc = 0;
+    if (isSeaMulti && hasFobOrCifMulti) {
+      if (multiSeaUseEstimate) {
+        // 海运估算模式：EXW×2.5% 估算国内物流，FOB×0.3% 估算保险
+        domesticLogistics = exwUSD * 0.025;
+        cifSeaFreightPerPc = (exwUSD + domesticLogistics) * 0.003;
+      } else {
+        // 海运实际模式：FOB = EXW + 国内/拖车+港杂（按CBM分摊），CIF = FOB + 海运费+保险费
+        domesticLogistics = p.qty > 0 ? p.fobFreightCNY / p.qty / rate : 0;
+        cifSeaFreightPerPc = p.qty > 0 ? p.cifFreightCNY / p.qty / rate : 0;
+      }
+    } else {
+      domesticLogistics = exwUSD * 0.025;
+    }
+
     const fobUSD = exwUSD + domesticLogistics;
-    const insurance = fobUSD * insuranceRate;
-    const cifUSD = fobUSD + p.freightPerPcUSD + insurance;
+    const insurance = (!isSeaMulti || multiSeaUseEstimate) ? fobUSD * 0.003 : 0;
+    const cifUSD = fobUSD + (isSeaMulti ? cifSeaFreightPerPc : p.freightPerPcUSD) + insurance;
     const dapUSD = cifUSD;
     const ddpUSD = cifUSD;
     p.results = {
       exwUSD, fobUSD, cifUSD, dapUSD, ddpUSD,
       freightPerPcUSD: p.freightPerPcUSD,
       domesticLogistics, insurance,
-      profitRate
+      profitRate, isSeaMulti, seaUseEstimate: multiSeaUseEstimate
     };
   });
 
@@ -3239,7 +3424,7 @@ function calculateMulti() {
       <div class="cost-section-title">📦 基本信息</div>
       <div class="cost-grid">
         <div class="cost-item"><span class="label">国家/方式</span><span class="value">${destText} · ${modeLabel}</span></div>
-        <div class="cost-item full"><span class="label">总运费</span><span class="value">¥${totalFreightCNY.toFixed(2)} ≈ $${(totalFreightCNY/rate).toFixed(2)}（${allocMethod}分摊${multiFreightMode === 'rate' ? '，按单价计算' : ''}）</span></div>
+        <div class="cost-item full"><span class="label">总运费</span><span class="value">¥${totalFreightCNY.toFixed(2)} ≈ $${(totalFreightCNY/rate).toFixed(2)}（${multiSeaUseEstimate ? '自动估算：EXW×2.5% + FOB×0.3%' : allocMethod + '分摊' + (multiFreightMode === 'rate' ? '，按单价计算' : '')}）</span></div>
         <div class="cost-item full"><span class="label">产品总数</span><span class="value" style="font-weight:600;">${products.reduce((s,p)=>s+p.qty,0).toLocaleString()} 件（${products.length} 个产品）</span></div>
       </div>
     </div>`;
@@ -3319,20 +3504,11 @@ function calculateMulti() {
       } else {
         // 有阶梯的产品，每个阶梯一行
         p.tiers.forEach((tier, ti) => {
-          const pr = tier.profit / 100;
-          const exwUSD = p.totalCostUSD * (1 + pr);
-          const domesticLogistics = exwUSD * 0.025;
-          const fobUSD = exwUSD + domesticLogistics;
-          const insurance = fobUSD * insuranceRate;
-          const cifUSD = fobUSD + p.freightPerPcUSD + insurance;
-          const dapUSD = cifUSD;
-          const ddpUSD = cifUSD;
-          const r = { exwUSD, fobUSD, cifUSD, dapUSD, ddpUSD };
-          const up = r[lastTerm + 'USD'];
           const tr = document.createElement('tr');
           const tierQty = tier.qty >= p.qty ? p.qty : tier.qty;
           let tds = `<td>${ti === 0 ? p.name : ''}</td><td>${tier.qty >= p.qty ? '≥' + p.qty.toLocaleString() : tier.qty.toLocaleString() + '+'}</td>`;
-          activeTerms.forEach(t => { tds += `<td class="money">$${r[t+'USD'].toFixed(2)}</td>`; });
+          activeTerms.forEach(t => { tds += `<td class="money">$${calcProductTierPrice(p, tier, t).toFixed(2)}</td>`; });
+          const up = calcProductTierPrice(p, tier, lastTerm);
           tds += `<td class="money" style="font-weight:700;color:#16a34a;">$${(up * p.qty).toFixed(2)}</td>`;
           tr.innerHTML = tds;
           tbody.appendChild(tr);
@@ -3360,8 +3536,23 @@ function calcProductTierPrice(p, tier, termKey) {
   const exwUSD = p.totalCostUSD * (1 + pr);
   const domesticLogistics = exwUSD * 0.025;
   const fobUSD = exwUSD + domesticLogistics;
+
+  const isSea = p.results && p.results.isSeaMulti;
+  const useEstimate = p.results && p.results.seaUseEstimate;
+
+  // CIF 运费部分
+  let cifFreightUSD = 0;
+  if (isSea && !useEstimate) {
+    // 海运实际模式：按CBM分摊的费用（已在 p.cifFreightCNY 中）
+    const rateVal = p.totalCostCNY / p.totalCostUSD || 1;
+    cifFreightUSD = p.qty > 0 ? p.cifFreightCNY / p.qty / rateVal : 0;
+  } else {
+    // 非海运 或 海运估算模式：用运费单价或百分比估算
+    cifFreightUSD = p.freightPerPcUSD || 0;
+  }
+
   const insurance = fobUSD * 0.003;
-  const cifUSD = fobUSD + p.freightPerPcUSD + insurance;
+  const cifUSD = fobUSD + cifFreightUSD + insurance;
   const r = { exwUSD, fobUSD, cifUSD, dapUSD: cifUSD, ddpUSD: cifUSD };
   return r[termKey + 'USD'];
 }
@@ -3403,6 +3594,9 @@ function generateMultiQuickQuote(products, activeTerms, lastTerm) {
   text += `━━━━━━━━━━━━━━━━━\n`;
   text += `📊 Summary\n`;
   text += `  Total: $${grandTotal.toFixed(2)}\n`;
+  if (products[0] && products[0].results && products[0].results.seaUseEstimate) {
+    text += `  ⚠️ 运费为自动估算（EXW×2.5% + FOB×0.3%），请以实际费用为准\n`;
+  }
   text += `━━━━━━━━━━━━━━━━━\n`;
   text += `📅 ${new Date().toLocaleDateString('zh-CN')}`;
   pre.textContent = text;
@@ -3439,19 +3633,32 @@ function calculate() {
 
   // CIF/DAP/DDP 需要外箱信息 + 运费
   const needsFreight = selectedTerms.has('cif') || selectedTerms.has('dap') || selectedTerms.has('ddp');
-  if (needsFreight) {
+  const isSeaMode = currentShippingMode === 'lcl' || currentShippingMode === 'fcl';
+  const hasFobOrCif = selectedTerms.has('fob') || selectedTerms.has('cif');
+
+  if (needsFreight && !isSeaMode) {
+    // 非海运：需要运费单价
     const freightRate = parseFloat(document.getElementById('freightRate').value) || 0;
-    const fclTotal = parseFloat(document.getElementById('fclTotalFreight').value) || 0;
-    if (currentShippingMode === 'fcl') {
-      if (fclTotal <= 0) missing.push({ msg: 'FCL 运费', field: 'fclTotalFreight' });
+    if (freightRate <= 0) missing.push({ msg: '运费单价', field: 'freightRate' });
+  }
+
+  // 海运模式 + FOB/CIF 需要明细费用
+  if (isSeaMode && hasFobOrCif) {
+    if (currentShippingMode === 'lcl') {
+      // LCL + FOB/CIF
+      // 不强制校验，用户可能只是看 EXW
     } else {
-      if (freightRate <= 0) missing.push({ msg: '运费单价', field: 'freightRate' });
+      // FCL + FOB/CIF
+      // 不强制校验
     }
+  }
+
+  if (needsFreight || hasFobOrCif) {
     const cL = parseFloat(document.getElementById('cartonL').value) || 0;
     const cW = parseFloat(document.getElementById('cartonW').value) || 0;
     const cH = parseFloat(document.getElementById('cartonH').value) || 0;
     const cGW = parseFloat(document.getElementById('cartonGrossWeight').value) || 0;
-    if (cGW <= 0) missing.push({ msg: '外箱毛重', field: 'cartonGrossWeight' });
+    if (cGW <= 0 && !isSeaMode) missing.push({ msg: '外箱毛重', field: 'cartonGrossWeight' });
     if (cL <= 0 || cW <= 0 || cH <= 0) missing.push({ msg: '外箱尺寸', field: 'cartonL' });
   }
 
@@ -3482,17 +3689,31 @@ function calculate() {
   const chargeableW = chargeableWInput > 0 ? chargeableWInput : Math.max(cartonGrossW, volWCalc);
 
   const freightRate = parseFloat(document.getElementById('freightRate').value) || 0;
-  const extraFreightCost = parseFloat(document.getElementById(
-    currentShippingMode === 'fcl' ? 'fclExtraFreightCost' : 'extraFreightCost'
-  ).value) || 0;
-  const fclTotalFreight = parseFloat(document.getElementById('fclTotalFreight').value) || 0;
-  const fclQty = parseInt(document.getElementById('fclQty').value) || 0;
+  const extraFreightCost = parseFloat(document.getElementById('extraFreightCost').value) || 0;
   const totalCartonsCalc = parseInt(document.getElementById('totalCartons').value) || 0;
   const totalPcsCalc = totalCartonsCalc * pcsPerCarton || 1;
+  const totalCBM = cbmPerCarton * totalCartonsCalc; // 整批总体积
 
   const country = document.getElementById('destCountry').value;
   const destText = getDestText();
   const inlandFreight = (freightPresets[country] || freightPresets.OTHER).inland;
+
+  // 海运明细费用读取
+  let seaDomesticFreight = 0, seaPortCharge = 0, seaFreight = 0, seaInsurance = 0, fclQty = 0;
+  if (isSeaMode) {
+    if (currentShippingMode === 'lcl') {
+      seaDomesticFreight = parseFloat(document.getElementById('lclDomesticFreight').value) || 0;
+      seaPortCharge = parseFloat(document.getElementById('lclPortCharge').value) || 0;
+      seaFreight = parseFloat(document.getElementById('lclSeaFreight').value) || 0;
+      seaInsurance = parseFloat(document.getElementById('lclInsurance').value) || 0;
+    } else {
+      seaDomesticFreight = parseFloat(document.getElementById('fclTruckFee').value) || 0; // FCL: 拖车费 = 国内运费
+      seaPortCharge = parseFloat(document.getElementById('fclPortCharge').value) || 0;
+      seaFreight = parseFloat(document.getElementById('fclSeaFreight').value) || 0;
+      seaInsurance = parseFloat(document.getElementById('fclInsurance').value) || 0;
+      fclQty = parseInt(document.getElementById('fclQty').value) || 0;
+    }
+  }
 
   // 阶梯设置（从动态输入读取，未启用则固定 20%）
   const tiersInput = getSingleTiers();
@@ -3529,47 +3750,97 @@ function calculate() {
       }
       break;
     case 'lcl':
-      if (cbmPerCarton > 0) {
-        freightPerPc = freightRate * cbmPerCarton / pcsPerCarton / currentRate;
-        freightDesc = `拼箱 ¥${freightRate}/m³ × ${cbmPerCarton.toFixed(4)}m³÷${pcsPerCarton}`;
-      }
-      break;
     case 'fcl':
-      if (fclQty > 0) {
-        freightPerPc = fclTotalFreight / fclQty / currentRate;
-        freightDesc = `整柜 ¥${fclTotalFreight}÷${fclQty}件`;
+      // 海运模式：运费从明细字段取（在下面按术语分配）
+      if (isSeaMode && totalPcsCalc > 0) {
+        const modeLabel = currentShippingMode === 'lcl' ? '拼箱' : '整柜';
+        const fobItems = [];
+        const cifItems = [];
+        if (seaDomesticFreight > 0) {
+          fobItems.push(`${currentShippingMode === 'lcl' ? '国内运费' : '拖车费'} ¥${seaDomesticFreight}`);
+        }
+        if (seaPortCharge > 0) {
+          fobItems.push(`港杂费 ¥${seaPortCharge}`);
+        }
+        if (seaFreight > 0) {
+          cifItems.push(`海运费 ¥${seaFreight}`);
+        }
+        if (seaInsurance > 0) {
+          cifItems.push(`保险费 ¥${seaInsurance}`);
+        }
+        if (fobItems.length > 0) freightDesc = fobItems.join(' + ');
+        if (cifItems.length > 0) freightDesc += (freightDesc ? ' + ' : '') + cifItems.join(' + ');
+        if (!freightDesc) freightDesc = `${modeLabel}无额外费用`;
+        freightDesc += ` ÷${totalCBM.toFixed(4)}m³÷${pcsPerCarton}件/箱`;
       }
       break;
   }
 
-  // 额外费用分摊到每件（美元）
+  // 额外费用分摊到每件（美元）- 仅非海运模式
   let extraPerPc = 0;
-  if (extraFreightCost > 0) {
+  if (!isSeaMode && extraFreightCost > 0) {
     extraPerPc = extraFreightCost / totalPcsCalc / currentRate;
     freightDesc += (freightDesc ? ' + ' : '') + `额外 ¥${extraFreightCost}÷${totalPcsCalc}件`;
-  }
-
-  const insuranceRate = 0.003;
-  let inlandPerPc = 0;
-  if (currentShippingMode !== 'fcl' && cbmPerCarton > 0) {
-    inlandPerPc = inlandFreight * cbmPerCarton / pcsPerCarton / currentRate;
   }
 
   // === 第四步：计算每个阶梯（只计算选中的术语） ===
   const results = tiers.map(tier => {
     const profitRate = tier.profit / 100;
     const exwUSD = (totalCostCNY / currentRate) * (1 + profitRate);
-    const domesticLogistics = exwUSD * 0.025;
+
+    // FOB 和 CIF 的计算方式取决于出货方式
+    let domesticLogistics = 0; // 国内物流/拖车+港杂，每件(USD)
+    let insurance = 0;          // 保险费，每件(USD)
+    let seaFreightPerPc = 0;    // 海运费，每件(USD)
+    let seaUseEstimate = false; // 是否使用了估算
+
+    if (isSeaMode && hasFobOrCif) {
+      // 海运模式：按 CBM 分摊明细费用
+      const pcsPerCartonVal = pcsPerCarton || 1;
+      const fobCostTotal = seaDomesticFreight + seaPortCharge;
+      const cifCostTotal = seaFreight + seaInsurance;
+
+      if (fobCostTotal === 0 && cifCostTotal === 0) {
+        // 明细费用全部为 0 → 自动按 EXW×2.5% 估算国内物流 + FOB×0.3% 估算保险
+        domesticLogistics = exwUSD * 0.025;
+        seaFreightPerPc = (exwUSD + domesticLogistics) * 0.003;
+        seaUseEstimate = true;
+      } else if (totalCBM > 0 && pcsPerCartonVal > 0) {
+        // FOB 费用：国内运费/拖车费 + 港杂费，按CBM分摊到每件
+        domesticLogistics = fobCostTotal / totalCBM * cbmPerCarton / pcsPerCartonVal / currentRate;
+
+        // CIF 额外费用：海运费 + 保险费，按CBM分摊到每件
+        seaFreightPerPc = cifCostTotal / totalCBM * cbmPerCarton / pcsPerCartonVal / currentRate;
+      }
+    } else {
+      // 非海运模式：自动估算
+      domesticLogistics = exwUSD * 0.025;
+      insurance = exwUSD * 0.003;
+      // DAP 目的国内陆运
+      if (cbmPerCarton > 0 && currentShippingMode !== 'fcl') {
+        freightPerPc = freightPerPc; // 已在上面算好
+      }
+    }
+
     const fobUSD = exwUSD + domesticLogistics;
-    const insurance = fobUSD * insuranceRate;
-    const cifUSD = fobUSD + freightPerPc + insurance + extraPerPc;
-    const dapUSD = cifUSD + inlandPerPc;
+    const cifUSD = fobUSD + seaFreightPerPc + (isSeaMode ? 0 : insurance) + (isSeaMode ? 0 : (freightPerPc + extraPerPc));
+
+    // DAP/DDP：非海运模式才支持
+    let inlandPerPc = 0;
+    if (!isSeaMode && cbmPerCarton > 0) {
+      inlandPerPc = inlandFreight * cbmPerCarton / pcsPerCarton / currentRate;
+    }
+    const dapUSD = isSeaMode ? cifUSD : cifUSD + inlandPerPc;
     const ddpUSD = dapUSD; // DDP 不含关税估算
 
     return {
       qty: tier.qty, profitRate: tier.profit, totalCostCNY,
       exwUSD, fobUSD, cifUSD, dapUSD, ddpUSD,
-      freightPerPc, domesticLogistics, inlandPerPc, insurance, extraPerPc
+      freightPerPc: isSeaMode ? (domesticLogistics + seaFreightPerPc) : freightPerPc,
+      domesticLogistics, inlandPerPc,
+      insurance: isSeaMode ? seaFreightPerPc : insurance,
+      extraPerPc, isSeaMode, seaUseEstimate,
+      seaDomesticFreight, seaPortCharge, seaFreight, seaInsurance
     };
   });
 
@@ -3580,7 +3851,12 @@ function calculate() {
   const main = results[0];
   // 运费和总报价基于实际产品总数（装箱数 × 外箱总数）
   const actualPcs = totalPcsCalc;
-  const totalFreightUSD = (main.freightPerPc + main.extraPerPc) * actualPcs;
+  // 总运费：海运取明细费用合计，非海运取运费单价计算
+  let totalFreightUSD = (main.freightPerPc + main.extraPerPc) * actualPcs;
+  if (isSeaMode) {
+    // 海运：所有明细费用之和转为美元
+    totalFreightUSD = (main.domesticLogistics + main.insurance) * actualPcs;
+  }
   // 总报价 = 取最后一个（最高级）术语的单价 × 实际产品总数
   const lastTerm = activeTerms[activeTerms.length - 1];
   const mainQuotePerPc = main[lastTerm + 'USD'];
@@ -3615,8 +3891,41 @@ function calculate() {
 
   // 额外费用行
   let extraLine = '';
-  if (main.extraPerPc > 0) {
+  if (main.extraPerPc > 0 && !isSeaMode) {
     extraLine = `<div class="cost-item"><span class="label">额外费用/件</span><span class="value">$${main.extraPerPc.toFixed(2)}</span></div>`;
+  }
+
+  // 海运费用明细行
+  let seaDetailLines = '';
+  let seaEstimateHint = '';
+  if (isSeaMode && hasFobOrCif) {
+    if (main.seaUseEstimate) {
+      // 估算模式：按百分比估算
+      const estDomestic = main.exwUSD * 0.025;
+      const estInsurance = (main.exwUSD + estDomestic) * 0.003;
+      seaEstimateHint = '<div style="font-size:11px;color:#f59e0b;margin-bottom:6px;">⚠️ 未填写明细费用，以下为自动估算值（仅供参考）</div>';
+      seaDetailLines += `<div class="cost-item"><span class="label">国内物流（估算）</span><span class="value">$${estDomestic.toFixed(2)}/件<span style="font-size:11px;color:var(--text-muted)">（EXW×2.5%）</span></span></div>`;
+      seaDetailLines += `<div class="cost-item"><span class="label">保险费（估算）</span><span class="value">$${estInsurance.toFixed(2)}/件<span style="font-size:11px;color:var(--text-muted)">（FOB×0.3%）</span></span></div>`;
+    } else {
+      // 实际费用模式
+      const domesticLabel = currentShippingMode === 'lcl' ? '国内运费' : '拖车费';
+      if (seaDomesticFreight > 0) {
+        const perPc = totalCBM > 0 ? seaDomesticFreight / totalCBM * cbmPerCarton / pcsPerCarton / currentRate : 0;
+        seaDetailLines += `<div class="cost-item"><span class="label">${domesticLabel}</span><span class="value">¥${seaDomesticFreight} ≈ $${(seaDomesticFreight/currentRate).toFixed(2)}<span style="font-size:11px;color:var(--text-muted)">（$${perPc.toFixed(2)}/件）</span></span></div>`;
+      }
+      if (seaPortCharge > 0) {
+        const perPc = totalCBM > 0 ? seaPortCharge / totalCBM * cbmPerCarton / pcsPerCarton / currentRate : 0;
+        seaDetailLines += `<div class="cost-item"><span class="label">港杂费</span><span class="value">¥${seaPortCharge} ≈ $${(seaPortCharge/currentRate).toFixed(2)}<span style="font-size:11px;color:var(--text-muted)">（$${perPc.toFixed(2)}/件）</span></span></div>`;
+      }
+      if (seaFreight > 0) {
+        const perPc = totalCBM > 0 ? seaFreight / totalCBM * cbmPerCarton / pcsPerCarton / currentRate : 0;
+        seaDetailLines += `<div class="cost-item"><span class="label">海运费</span><span class="value">¥${seaFreight} ≈ $${(seaFreight/currentRate).toFixed(2)}<span style="font-size:11px;color:var(--text-muted)">（$${perPc.toFixed(2)}/件）</span></span></div>`;
+      }
+      if (seaInsurance > 0) {
+        const perPc = totalCBM > 0 ? seaInsurance / totalCBM * cbmPerCarton / pcsPerCarton / currentRate : 0;
+        seaDetailLines += `<div class="cost-item"><span class="label">保险费</span><span class="value">¥${seaInsurance} ≈ $${(seaInsurance/currentRate).toFixed(2)}<span style="font-size:11px;color:var(--text-muted)">（$${perPc.toFixed(2)}/件）</span></span></div>`;
+      }
+    }
   }
 
   // 运费描述
@@ -3636,9 +3945,15 @@ function calculate() {
       <div class="cost-section-title">🚚 物流费用</div>
       <div class="cost-grid">
         ${weightStr ? `<div class="cost-item full"><span class="label">计费重</span><span class="value">${weightStr}</span></div>` : ''}
-        <div class="cost-item full"><span class="label">外箱体积</span><span class="value">${cbmPerCarton.toFixed(4)} m³/箱${totalCartons > 0 ? `（共 ${(cbmPerCarton * totalCartons).toFixed(4)} m³）` : ''}</span></div>
+        <div class="cost-item full"><span class="label">外箱体积</span><span class="value">${cbmPerCarton.toFixed(4)} m³/箱${totalCartons > 0 ? `（共 ${totalCBM.toFixed(4)} m³）` : ''}</span></div>
+        ${isSeaMode && hasFobOrCif ? `
+        <div class="cost-item full"><span class="label" style="font-weight:600;color:var(--text-secondary);">海运费用明细<span style="font-size:11px;color:var(--text-muted)">（按${totalCBM.toFixed(4)}m³分摊）</span></span></div>
+        ${seaEstimateHint}
+        ${seaDetailLines}
+        ` : `
         <div class="cost-item full"><span class="label">运费/件</span><span class="value">¥${(main.freightPerPc * currentRate).toFixed(2)} ≈ $${main.freightPerPc.toFixed(2)} <span style="font-size:11px;color:var(--text-muted)">（${freightDesc || '无运费'}）</span></span></div>
         ${extraLine}
+        `}
         <div class="cost-item full"><span class="label">总运费</span><span class="value" style="font-weight:600;color:var(--primary);">¥${(totalFreightUSD * currentRate).toFixed(2)} ≈ $${totalFreightUSD.toFixed(2)}</span></div>
       </div>
     </div>
@@ -3724,6 +4039,7 @@ function generateQuickQuote(productName, results, totalPcs) {
   text += `  Total: ${mainPcs.toLocaleString()} pcs × $${unitPrice.toFixed(2)}\n`;
   text += `  Product Cost: $${productCostUSD.toFixed(2)}\n`;
   if (shippingCostUSD > 0) text += `  Shipping Cost: $${shippingCostUSD.toFixed(2)}\n`;
+  if (main.seaUseEstimate) text += `  ⚠️ 运费为自动估算（EXW×2.5% + FOB×0.3%），请以实际费用为准\n`;
   text += `  Amount: $${totalPrice.toFixed(2)}\n`;
   text += `━━━━━━━━━━━━━━━━━\n`;
   text += `📅 ${new Date().toLocaleDateString('zh-CN')}`;
