@@ -417,6 +417,13 @@
 
   .term-check .term-hint { font-size: 10px; color: var(--text-muted); }
 
+  /* 术语勾选框禁用状态（非海运模式下 FOB/CIF 不可用） */
+  .term-check.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
   /* 必填提示 */
   .required-hint {
     font-size: 11px; color: var(--text-muted); margin-bottom: 10px;
@@ -1307,6 +1314,8 @@ const shippingConfig = {
 
 // ========== 术语选择 ==========
 function toggleTerm(el) {
+  // 非海运模式下禁止勾选 FOB/CIF
+  if (el.classList.contains('disabled')) return;
   const term = el.dataset.term;
   const checkbox = el.querySelector('input');
   const icon = el.querySelector('.check-icon');
@@ -1370,18 +1379,38 @@ function updateSeaFreightFields() {
   const isFCL = currentShippingMode === 'fcl';
   const isSea = isLCL || isFCL;
   const hasFobOrCif = selectedTerms.has('fob') || selectedTerms.has('cif');
-
-  // LCL明细：选了LCL + FOB或CIF时显示
+  updateTermVisibility();
+  if (!isSea) return;
   document.getElementById('lclDetailFields').style.display = isLCL && hasFobOrCif ? 'block' : 'none';
-  // FCL明细：选了FCL + FOB或CIF时显示
   document.getElementById('fclDetailFields').style.display = isFCL && hasFobOrCif ? 'block' : 'none';
-
-  // 多品模式：海运明细显示时隐藏标准运费区域
-  if (quoteMode === 'multi') {
-    document.getElementById('multiFreightSection').style.display = (isSea && hasFobOrCif) ? 'none' : 'block';
-  }
-
   updateSeaCifFieldsVisibility();
+}
+
+/** 控制术语勾选框的可用性：非海运模式下禁用 FOB/CIF */
+function updateTermVisibility() {
+  const isSea = currentShippingMode === 'lcl' || currentShippingMode === 'fcl';
+  const fobEl = document.querySelector('.term-check[data-term="fob"]');
+  const cifEl = document.querySelector('.term-check[data-term="cif"]');
+  if (isSea) {
+    fobEl.classList.remove('disabled');
+    cifEl.classList.remove('disabled');
+  } else {
+    fobEl.classList.add('disabled');
+    cifEl.classList.add('disabled');
+    // 非海运模式强制移除 FOB/CIF 勾选
+    if (selectedTerms.has('fob')) {
+      selectedTerms.delete('fob');
+      fobEl.classList.remove('checked');
+      fobEl.querySelector('input').checked = false;
+      fobEl.querySelector('.check-icon').textContent = '';
+    }
+    if (selectedTerms.has('cif')) {
+      selectedTerms.delete('cif');
+      cifEl.classList.remove('checked');
+      cifEl.querySelector('input').checked = false;
+      cifEl.querySelector('.check-icon').textContent = '';
+    }
+  }
 }
 
 /** 更新 CIF 专属费用字段（海运费+保险费）的显隐 */
@@ -2380,6 +2409,7 @@ function selectShipping(btn) {
   const recommended = termRecommend[currentShippingMode] || ['exw', 'fob', 'cif'];
   selectedTerms = new Set(recommended);
   syncTermUI();
+  updateTermVisibility();  // 非海运模式禁用 FOB/CIF 勾选框
   updateRequiredHint();
 
   // 运费字段显示控制
@@ -2436,19 +2466,8 @@ function selectShipping(btn) {
     document.getElementById('freightPresetHint').style.display = 'none';
   }
 
-  // 根据出货方式自动推荐术语
-  const termRecommend = {
-    exw_pickup: ['exw'],          // EXW自提：只选EXW
-    express: ['exw', 'dap'],       // 快递：EXW + DAP（门到门）
-    air:     ['exw', 'ddp'],       // 空派：EXW + DDP（含清关门到门）
-    sea_dap: ['exw', 'ddp'],       // 海派：EXW + DDP（含清关门到门）
-    lcl:     ['exw', 'fob'],       // 海运LCL：EXW + FOB
-    fcl:     ['exw', 'fob']        // 海运FCL：EXW + FOB
-  };
-  const recommended = termRecommend[currentShippingMode] || ['exw', 'fob', 'cif'];
-  selectedTerms = new Set(recommended);
-  syncTermUI();
-  updateRequiredHint();
+  // 根据出货方式自动推荐术语（已在函数开头执行，此处仅保留注释说明）
+  // selectedTerms / syncTermUI / updateRequiredHint 已在上方完成
 
   // 更新抛重计算
   updateVolWeight();
